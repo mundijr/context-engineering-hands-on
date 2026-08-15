@@ -1,5 +1,5 @@
-from pydantic import BaseModel
 from anthropic import Anthropic
+from pydantic import BaseModel
 
 
 class Quiz(BaseModel):

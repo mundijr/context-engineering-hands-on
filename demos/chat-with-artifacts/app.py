@@ -31,7 +31,6 @@ from fastapi import FastAPI
 from fastapi.requests import Request
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-
 from schemas import ArtifactRegistry, get_artifact_descriptions, get_artifact_tool
 
 MODEL = "claude-sonnet-4-6"

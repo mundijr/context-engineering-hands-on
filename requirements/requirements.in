@@ -7,3 +7,5 @@ pyyaml
 python-dotenv
 scikit-learn
 ipython
+claude-agent-sdk
+types-PyYAML

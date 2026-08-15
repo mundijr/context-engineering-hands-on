@@ -8,14 +8,12 @@ how tool results enter context, or how tokens accumulate.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import anthropic
-
 import display
 from retrieval import KnowledgeBase
 from tools import execute_tool, get_tool_definitions
-
 
 # ─── TEACHING MOMENT ──────────────────────────────────────────────
 # The system prompt is "writing context" — the first lever.

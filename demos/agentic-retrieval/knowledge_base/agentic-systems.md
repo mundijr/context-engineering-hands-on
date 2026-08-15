@@ -22,6 +22,7 @@ Each cycle through this loop adds both the model's reasoning (assistant message)
 ## Why Context Grows Fast
 
 Consider a research agent that searches documents then synthesizes findings:
+
 - **Turn 1**: User asks a question (50 tokens) → model calls `search` (20 tokens) → tool returns 3 results (600 tokens) → model synthesizes (200 tokens)
 - **Turn 2**: Model calls `get_document` for more detail (20 tokens) → tool returns full doc (800 tokens) → model responds (300 tokens)
 
@@ -30,6 +31,7 @@ After just one user question, the messages array contains ~2,000 tokens of accum
 ## Managing Agentic Context
 
 Effective strategies include:
+
 - **Scratchpads**: Let the agent write working notes that persist across turns
 - **Context compression**: Summarize old turns to free token budget for new ones
 - **Sub-agent isolation**: Delegate sub-tasks to fresh context windows

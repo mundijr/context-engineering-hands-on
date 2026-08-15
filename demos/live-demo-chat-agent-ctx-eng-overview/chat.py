@@ -7,7 +7,9 @@
 # ]
 # ///
 import os
+
 import anthropic
+
 # import prompt_toolkit
 
 MAX_ROUNDS = 10
@@ -117,7 +119,7 @@ def execute_tool(name: str, tool_input: dict) -> str:
         return f"Error: unknown tool '{name}'."
     try:
         return str(func(**tool_input))
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — one bad tool call shouldn't crash the agent loop
         return f"Error running tool '{name}': {e}"
 
 class Agent:
@@ -219,7 +221,7 @@ def chat_session():
             continue
         elif msg == "help":
             print("Commands available: ")
-            for tool in TOOL_FUNCTIONS.keys():
+            for tool in TOOL_FUNCTIONS:
                 print(tool)
         response = agent.run_turn(msg)
         print(f"Assistant: {response}")

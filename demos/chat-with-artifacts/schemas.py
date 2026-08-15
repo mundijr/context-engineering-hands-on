@@ -8,7 +8,6 @@ The registry feeds dynamic context back into the system prompt.
 
 from __future__ import annotations
 
-
 # ─── TEACHING MOMENT ──────────────────────────────────────────────
 # Each artifact type has three parts:
 #   1. description — what the model reads to decide WHEN to use it

@@ -1,5 +1,5 @@
 ENV_NAME ?= ctx-eng
-PYTHON_VERSION ?= 3.12
+PYTHON_VERSION ?= 3.13
 VENV_PATH = .venv
 
 .PHONY: all venv-create env-setup repo-setup notebook-setup env-update clean freeze
