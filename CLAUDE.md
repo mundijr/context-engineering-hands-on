@@ -26,7 +26,7 @@ make freeze          # snapshot current venv into requirements/requirements.txt
 make clean            # remove .venv and unregister the Jupyter kernel
 ```
 
-There is no lint/test suite in this repo — it's course material, not a shipped library.
+There is no test suite and no CI enforcement — it's course material, not a shipped library. Ruff is used ad hoc to keep the demos clean (`uvx ruff check demos`); deliberate exceptions (e.g. an intentionally broad `except Exception` in a REPL loop) are marked with `# noqa: <RULE> — <reason>` rather than fixed.
 
 ## Structure
 
@@ -51,7 +51,6 @@ Every demo teaches a different context-engineering lever by making it visible in
 - `tools.py` — Anthropic tool schemas + dispatch (`search_documents`, `get_document`, `list_documents`).
 - `display.py` — ANSI terminal rendering for chat, tool calls, and stats.
 - `app.py` — TUI entry point with slash commands (`/context`, `/stats`, `/clear`, `/docs`, `/help`, `/quit`).
-- Compare against `agent_sdk_example.py` (if present) to contrast manual context management vs. the Agent SDK doing it implicitly.
 
 ### `demos/chat-with-artifacts/`
 
@@ -76,4 +75,4 @@ Agentic-RAG CLI using `claude_agent_sdk` (`ClaudeSDKClient`, `@tool`, `create_sd
 
 - Model constant is `MODEL = "claude-sonnet-4-6"` (or hardcoded inline) — keep new demos consistent unless intentionally demonstrating a different model.
 - API key loading: FastAPI-based demos call `load_dotenv()` before importing `anthropic`; plain scripts read `ANTHROPIC_API_KEY` from the environment directly.
-- PEP 723 inline script headers (`# /// script` ... `# ///`) declare each standalone demo's dependencies — check/update these when adding imports, since there's no shared `requirements.txt` for `demos/*.py` scripts (that file only backs the repo-level Jupyter venv via `Makefile`).
+- PEP 723 inline script headers (`# /// script` ... `# ///`) are authoritative for *running* each standalone demo via `uv run` — check/update these when adding imports to a demo. `requirements/requirements.in` (backing the repo-level `.venv` via `Makefile`) separately mirrors the union of every demo's third-party deps, purely so the Jupyter kernel and editor tooling (type checking, import resolution) can see across all demos at once — keep the two in sync by hand when either changes, but don't conflate them: the `.venv` is never what actually runs a demo.
