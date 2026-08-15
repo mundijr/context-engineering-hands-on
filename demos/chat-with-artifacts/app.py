@@ -6,7 +6,7 @@
 Chat with Artifacts — FastAPI backend.
 
 Run: uv run app.py
-Then open: http://127.0.0.1:8000
+Then open: http://127.0.0.1:8001
 
 This backend demonstrates context engineering in a chat application:
 - 3-layer system prompt (persona + artifact types + session state)

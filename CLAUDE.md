@@ -4,9 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-O'Reilly live training course — **Context Engineering Hands-On** — teaching developers how to design, manage, and optimize the context that flows into LLMs and agentic systems. The repo holds slide decks, hands-on Python demos, and a Jupyter notebook, all runnable via `uv run <script>.py` with an `ANTHROPIC_API_KEY` env var.
-
-**Note:** `README.md` documents an earlier 5-session structure (`demos/ctx-engineering-principles-claude-code/`, `demos/context-failures/`, `demos/ctx-engineering-tools-claude-code/`) that no longer matches the working tree — those directories were removed/replaced during a live session (see commit `0ddfd29`). Trust the actual `demos/` contents below over the README when they disagree.
+O'Reilly live training course — **Context Engineering Hands-On** — teaching developers how to design, manage, and optimize the context that flows into LLMs and agentic systems. The repo holds slide decks and hands-on Python demos, all runnable via `uv run <script>.py` with an `ANTHROPIC_API_KEY` env var. `README.md` covers the same demos in more run-it-yourself detail (prerequisites, sample queries, troubleshooting); this file focuses on architecture.
 
 ## Commands
 
