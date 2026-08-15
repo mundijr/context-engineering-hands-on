@@ -20,6 +20,7 @@ from __future__ import annotations
 import os
 import sys
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -34,6 +35,7 @@ from fastapi.staticfiles import StaticFiles
 from schemas import ArtifactRegistry, get_artifact_descriptions, get_artifact_tool
 
 MODEL = "claude-sonnet-4-6"
+STATIC_DIR = Path(__file__).parent / "static"
 
 # ─── TEACHING MOMENT ──────────────────────────────────────────────
 # The system prompt is built from 3 layers, each with a different
@@ -254,11 +256,11 @@ async def reset(request: Request) -> JSONResponse:
 @app.get("/")
 async def index():
     """Serve the single-file frontend."""
-    return FileResponse("static/index.html")
+    return FileResponse(STATIC_DIR / "index.html")
 
 
 # Mount static files for any additional assets
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 if __name__ == "__main__":
     if not os.environ.get("ANTHROPIC_API_KEY"):
@@ -267,6 +269,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     print("Starting Chat with Artifacts...")
-    print("  Open: http://127.0.0.1:8000")
+    print("  Open: http://127.0.0.1:8001")
     print("  Press Ctrl+C to stop\n")
     uvicorn.run(app, host="127.0.0.1", port=8001)

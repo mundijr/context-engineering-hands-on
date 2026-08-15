@@ -96,7 +96,7 @@ cd demos/chat-with-artifacts
 uv run app.py
 ```
 
-Then open **http://127.0.0.1:8000** in your browser.
+Then open **http://127.0.0.1:8001** in your browser.
 
 **What's demonstrated:**
 - 3-layer system prompt (persona + artifact schemas + dynamic session state)
@@ -185,11 +185,11 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 # Then restart your terminal
 ```
 
-**Port 8000 already in use (chat-with-artifacts)**
+**Port 8001 already in use (chat-with-artifacts)**
 
 ```bash
-# Find and kill the process using port 8000
-lsof -ti:8000 | xargs kill -9
+# Find and kill the process using port 8001
+lsof -ti:8001 | xargs kill -9
 # Then re-run
 uv run app.py
 ```
