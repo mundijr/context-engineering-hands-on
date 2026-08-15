@@ -28,3 +28,6 @@ walkthrough.md
 
 # MCP server artifacts
 .playwright-mcp/
+
+# Demo runtime artifacts
+.chat_history

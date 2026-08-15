@@ -145,12 +145,45 @@
       text-align: center; color: #777; font-size: 0.65em;
       margin-top: 0.8em; font-style: italic;
     }
+
+    /* Session jump nav — fixed overlay, always on top of the current slide */
+    .deck-nav {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 9999;
+      display: flex;
+      gap: 4px;
+      background: rgba(28, 28, 28, 0.82);
+      padding: 5px 6px;
+      border-radius: 6px;
+      font-family: 'Inter', -apple-system, sans-serif;
+    }
+    .deck-nav a {
+      color: #f5f0e6;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      padding: 4px 7px;
+      border-radius: 4px;
+    }
+    .deck-nav a:hover { background: rgba(255, 255, 255, 0.18); }
   </style>
 </head>
 <body>
+  <nav class="deck-nav">
+    <a href="#session-1" title="Session 1 — Introduction to Context Engineering">S1</a>
+    <a href="#session-2" title="Session 2 — Engineering Context in Agentic Systems">S2</a>
+    <a href="#session-3" title="Session 3 — Diagnosing and Fixing Context Failures">S3</a>
+    <a href="#session-4" title="Session 4 — Context Engineering in Modern AI Apps">S4</a>
+    <a href="#session-5" title="Session 5 — Tools and Techniques">S5</a>
+    <a href="#qna" title="Questions?">Q&amp;A</a>
+  </nav>
   <textarea id="source">
 
 class: title
+name: session-1
 
 .session-label[SESSION 1]
 
@@ -372,6 +405,7 @@ Transition. Give them 5 minutes back if you're ahead.
 ---
 
 class: title
+name: session-2
 
 .session-label[SESSION 2]
 
@@ -655,6 +689,7 @@ class: title
 ---
 
 class: title
+name: session-3
 
 .session-label[SESSION 3]
 
@@ -907,6 +942,7 @@ Bridge to S4: theory → real systems. We'll look at what Cursor, Manus, Claude 
 ---
 
 class: title
+name: session-4
 
 .session-label[SESSION 4]
 
@@ -1134,6 +1170,7 @@ S5 is short (45 min) and demo-heavy. ~20 minutes of slides, ~20 minutes of live 
 ---
 
 class: title
+name: session-5
 
 .session-label[SESSION 5]
 
@@ -1273,6 +1310,7 @@ The closing slide. Concrete homework: pick one agent at work, run the debugging 
 ---
 
 class: title
+name: qna
 
 # Questions?
 

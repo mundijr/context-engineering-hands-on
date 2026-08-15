@@ -1,5 +1,9 @@
-from pydantic import BaseModel
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["anthropic", "pydantic"]
+# ///
 from anthropic import Anthropic
+from pydantic import BaseModel
 
 
 class Quiz(BaseModel):

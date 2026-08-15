@@ -1,5 +1,5 @@
 ENV_NAME ?= ctx-eng
-PYTHON_VERSION ?= 3.12
+PYTHON_VERSION ?= 3.13
 VENV_PATH = .venv
 
 .PHONY: all venv-create env-setup repo-setup notebook-setup env-update clean freeze
@@ -14,7 +14,7 @@ env-setup: venv-create
 
 repo-setup:
 	mkdir -p requirements
-	echo "ipykernel" > requirements/requirements.in
+	test -f requirements/requirements.in || echo "ipykernel" > requirements/requirements.in
 
 notebook-setup: env-setup
 	$(VENV_PATH)/bin/python -m ipykernel install --user --name=$(ENV_NAME) --display-name "Python ($(ENV_NAME))"

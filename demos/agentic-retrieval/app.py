@@ -32,7 +32,7 @@ load_dotenv()
 # Ensure local imports work when run via `uv run`
 sys.path.insert(0, str(Path(__file__).parent))
 
-import display
+import display  # noqa: I001 — must stay unsorted here, after the sys.path fix-up above
 from agent import Agent
 from retrieval import KnowledgeBase
 
@@ -127,7 +127,7 @@ def main() -> None:
         try:
             response = agent.run_turn(user_input)
             display.assistant_text(response)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — keep the REPL alive after a bad turn
             display.error(f"Agent error: {e}")
 
 
