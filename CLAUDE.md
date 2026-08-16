@@ -11,13 +11,14 @@ O'Reilly live training course — **Context Engineering Hands-On** — teaching 
 Each demo is a self-contained `uv` script (PEP 723 inline dependencies) or uses the repo-level venv — check each file's `# /// script` header for its own deps.
 
 ```bash
-# Set API key (required by every demo)
-export ANTHROPIC_API_KEY=sk-ant-...
+# ANTHROPIC_API_KEY is required by every demo. On this machine it's not exported
+# manually — direnv loads it from the macOS Keychain via .envrc; see
+# "Secrets management" below.
 
 # Run any standalone demo script
 uv run demos/<path>/<script>.py
 
-# Repo-level venv (Jupyter kernel, notebook work) — managed via Makefile, not uv run
+# Repo-level venv managed via Makefile, not uv run
 make all            # create .venv, install deps, register Jupyter kernel
 make add <package>  # add a package to requirements.in and resync
 make freeze          # snapshot current venv into requirements/requirements.txt
@@ -25,6 +26,15 @@ make clean            # remove .venv and unregister the Jupyter kernel
 ```
 
 There is no test suite and no CI enforcement — it's course material, not a shipped library. Ruff is used ad hoc to keep the demos clean (`uvx ruff check demos`); deliberate exceptions (e.g. an intentionally broad `except Exception` in a REPL loop) are marked with `# noqa: <RULE> — <reason>` rather than fixed.
+
+### Secrets management (this developer's machine)
+
+This developer does not store `ANTHROPIC_API_KEY` (or other secrets) in `.env` files. Instead:
+
+- Secrets live in the macOS Keychain (`security add-generic-password` / `find-generic-password` — see `docs/macos-keychain-cli-guide.md` for the full CLI reference).
+- `direnv` loads them into the shell automatically on `cd` into the repo, via a repo-root `.envrc` that reads each secret out of Keychain and `export`s it.
+- `.envrc` is gitignored (see `.gitignore`) — never commit it or any resolved secret value. Only the tracked `docs/macos-keychain-cli-guide.md` documents the mechanism.
+- When a demo or setup step says "set `ANTHROPIC_API_KEY`", assume it's already present in the environment via `direnv` rather than instructing this developer to hardcode it or add it to a `.env` file.
 
 ## Structure
 
