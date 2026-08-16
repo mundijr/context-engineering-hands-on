@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Context Engineering Atlas</title>
+</head>
+<body>
+<style>
+  :root {
+    --bg: #f2f1ec;
+    --surface: #ffffff;
+    --surface-2: #eae7de;
+    --ink: #1c2024;
+    --muted: #5d6570;
+    --line: #d9d6cb;
+    --accent: #2f6f68;
+    --accent-soft: #e1eeec;
+    --accent-ink: #ffffff;
+    --gold: #96700f;
+    --gold-soft: #f4e9d3;
+    --shadow: 0 1px 2px rgba(28, 32, 36, 0.06);
+    --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --radius: 8px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171a;
+      --surface: #1b1f24;
+      --surface-2: #21262c;
+      --ink: #e7e5dd;
+      --muted: #9aa2ac;
+      --line: #2a2f36;
+      --accent: #63b9b0;
+      --accent-soft: #1d2c2a;
+      --accent-ink: #06110f;
+      --gold: #d6a13f;
+      --gold-soft: #2b2413;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #14171a;
+    --surface: #1b1f24;
+    --surface-2: #21262c;
+    --ink: #e7e5dd;
+    --muted: #9aa2ac;
+    --line: #2a2f36;
+    --accent: #63b9b0;
+    --accent-soft: #1d2c2a;
+    --accent-ink: #06110f;
+    --gold: #d6a13f;
+    --gold-soft: #2b2413;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .page { max-width: 1180px; margin: 0 auto; padding: 0 24px 64px; }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+    padding: 40px 0 28px;
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .eyebrow {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .masthead h1 {
+    font-family: var(--font-display);
+    font-size: 34px;
+    font-weight: 700;
+    margin: 0 0 10px;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  .lede { margin: 0; max-width: 54ch; color: var(--muted); font-size: 15.5px; }
+
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    flex-shrink: 0;
+    padding-bottom: 2px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+  .swatch { width: 18px; height: 3px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+  .swatch.accent { background: var(--accent); }
+  .swatch.dashed {
+    background: repeating-linear-gradient(90deg, var(--muted) 0 5px, transparent 5px 9px);
+  }
+
+  /* ---------- Shell / rail ---------- */
+  .shell {
+    display: grid;
+    grid-template-columns: 252px 1fr;
+    gap: 0;
+    margin-top: 8px;
+  }
+
+  .rail {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-right: 1px solid var(--line);
+    padding: 20px 16px 20px 0;
+    position: sticky;
+    top: 0;
+    align-self: start;
+  }
+
+  .tab-btn {
+    all: unset;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 12px 14px;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+  }
+  .tab-btn:hover { background: var(--surface-2); }
+  .tab-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tab-btn[aria-selected="true"] {
+    background: var(--surface);
+    border-color: var(--line);
+    box-shadow: var(--shadow);
+  }
+  .tab-index {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .tab-btn[aria-selected="true"] .tab-index { color: var(--accent); }
+  .tab-name {
+    font-family: var(--font-display);
+    font-size: 16.5px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .tab-path {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    word-break: break-all;
+  }
+  .tab-pitch { font-size: 12.5px; color: var(--muted); margin-top: 1px; }
+  .tab-lever {
+    align-self: flex-start;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.03em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 2px 7px;
+    border-radius: 999px;
+  }
+
+  /* ---------- Content ---------- */
+  .content { padding: 28px 0 0 32px; min-width: 0; }
+  .panel-head { margin-bottom: 8px; }
+  .path {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .panel-head h2 {
+    font-family: var(--font-display);
+    font-size: 27px;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+  .pitch { color: var(--muted); max-width: 62ch; margin: 0 0 14px; font-size: 15px; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 30px; }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    background: var(--surface);
+  }
+  .chip.lever { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+  .diagram-block { margin-bottom: 36px; }
+  .diagram-block h3 {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  figure { margin: 0; }
+  .diagram-scroll {
+    overflow-x: auto;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+  }
+  .diagram-scroll svg { display: block; min-width: 640px; width: 100%; height: auto; }
+  figcaption { margin-top: 10px; font-size: 12.5px; color: var(--muted); max-width: 68ch; }
+
+  .notes {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 22px 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+  }
+  .notes h3 {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  .notes ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 9px; }
+  .notes li { font-size: 14.5px; }
+  .notes code {
+    font-family: var(--font-mono);
+    font-size: 0.87em;
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .notes .src { color: var(--muted); font-family: var(--font-mono); font-size: 11.5px; }
+
+  /* ---------- Diagram (SVG) styling ---------- */
+  .dg-node rect { fill: var(--surface); stroke: var(--ink); stroke-width: 1.4; }
+  .dg-node.soft rect { fill: var(--surface-2); }
+  .dg-node.accent rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.8; }
+  .dg-node.dashed rect { stroke-dasharray: 4 3; }
+  .dg-node .n-title { fill: var(--ink); font-family: var(--font-mono); font-size: 12.5px; font-weight: 700; }
+  .dg-node .n-sub { fill: var(--muted); font-family: var(--font-body); font-size: 10.5px; }
+  .dg-node.accent .n-title { fill: var(--accent); }
+
+  .dg-edge { stroke: var(--muted); stroke-width: 1.4; fill: none; }
+  .dg-edge.accent { stroke: var(--accent); stroke-width: 1.8; }
+  .dg-edge.dashed { stroke-dasharray: 4 3; }
+  .dg-edge-label { fill: var(--muted); font-family: var(--font-mono); font-size: 10.5px; }
+  .dg-edge-label.accent { fill: var(--accent); }
+
+  .dg-lane-label { fill: var(--muted); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.03em; text-transform: uppercase; }
+  .dg-lane-line { stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 4; }
+  .dg-step-badge circle { fill: var(--surface-2); stroke: var(--line); stroke-width: 1; }
+  .dg-step-badge.accent circle { fill: var(--accent); stroke: var(--accent); }
+  .dg-step-badge text { fill: var(--muted); font-family: var(--font-mono); font-size: 10px; text-anchor: middle; dominant-baseline: middle; }
+  .dg-step-badge.accent text { fill: var(--accent-ink); }
+  .dg-spine { stroke: var(--line); stroke-width: 1; }
+
+  @media (max-width: 860px) {
+    .shell { grid-template-columns: 1fr; }
+    .rail {
+      flex-direction: row;
+      overflow-x: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--line);
+      padding: 16px 0;
+      position: static;
+      gap: 8px;
+    }
+    .tab-btn { min-width: 220px; }
+    .content { padding: 24px 0 0; }
+    .masthead { align-items: flex-start; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <div>
+      <span class="eyebrow">context-engineering-hands-on · repo map</span>
+      <h1>Context Engineering Atlas</h1>
+      <p class="lede">Four demos, four different ways of deciding what a model gets to see. Pick one to trace how tokens actually move — from keystroke to API call to context window.</p>
+    </div>
+    <div class="legend">
+      <span class="legend-item"><i class="swatch accent"></i>tokens permanently enter context here</span>
+      <span class="legend-item"><i class="swatch dashed"></i>handled outside your application code</span>
+    </div>
+  </header>
+
+  <div class="shell">
+    <nav class="rail" role="tablist" aria-label="Demos in this repo">
+      <button class="tab-btn" role="tab" id="tabbtn-retrieval" aria-selected="true" aria-controls="panel-retrieval" data-tab="retrieval">
+        <span class="tab-index">01</span>
+        <span class="tab-name">Agentic Document Retrieval</span>
+        <span class="tab-path">demos/agentic-retrieval/</span>
+        <span class="tab-pitch">Hand-rolled agent loop, TF-IDF search, nothing hidden</span>
+        <span class="tab-lever">selecting context</span>
+      </button>
+      <button class="tab-btn" role="tab" id="tabbtn-artifacts" aria-selected="false" aria-controls="panel-artifacts" data-tab="artifacts">
+        <span class="tab-index">02</span>
+        <span class="tab-name">Chat with Artifacts</span>
+        <span class="tab-path">demos/chat-with-artifacts/</span>
+        <span class="tab-pitch">A system prompt built from three layers of different cost</span>
+        <span class="tab-lever">writing context</span>
+      </button>
+      <button class="tab-btn" role="tab" id="tabbtn-livedemo" aria-selected="false" aria-controls="panel-livedemo" data-tab="livedemo">
+        <span class="tab-index">03</span>
+        <span class="tab-name">Chat Agent Overview</span>
+        <span class="tab-path">demos/live-demo-chat-agent-ctx-eng-overview/</span>
+        <span class="tab-pitch">Three standalone scripts, each one rung more capable</span>
+        <span class="tab-lever">structured output</span>
+      </button>
+      <button class="tab-btn" role="tab" id="tabbtn-fullagent" aria-selected="false" aria-controls="panel-fullagent" data-tab="fullagent">
+        <span class="tab-index">04</span>
+        <span class="tab-name">Agentic-RAG CLI</span>
+        <span class="tab-path">demos/full_agent_app.py</span>
+        <span class="tab-pitch">Same retrieval idea, but the SDK owns the loop now</span>
+        <span class="tab-lever">delegating the loop</span>
+      </button>
+    </nav>
+
+    <main class="content">
+
+      <!-- ============================= PANEL 1 — RETRIEVAL ============================= -->
+      <section class="panel" id="panel-retrieval" role="tabpanel" aria-labelledby="tabbtn-retrieval">
+        <div class="panel-head">
+          <div class="path">demos/agentic-retrieval/</div>
+          <h2>Agentic Document Retrieval</h2>
+          <p class="pitch">The core teaching module. <code>Agent.messages</code> <em>is</em> the context window — every user message, tool call, and tool result is a visible entry in one growing Python list, re-sent on every API call.</p>
+          <div class="chips">
+            <span class="chip lever">Selecting Context</span>
+            <span class="chip">agent.py</span>
+            <span class="chip">retrieval.py</span>
+            <span class="chip">tools.py</span>
+            <span class="chip">app.py</span>
+          </div>
+        </div>
+
+        <div class="diagram-block">
+          <h3>Architecture</h3>
+          <figure>
+            <div class="diagram-scroll">
+              <svg viewBox="0 0 760 320" role="img" aria-label="A REPL sends user turns to an Agent object holding a messages list, which calls the Claude API in a loop of up to ten rounds; a tool call branches down through tools.py into a TF-IDF knowledge base, and the result is written back into the messages list.">
+                <defs>
+                  <marker id="mk-m-a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--muted)"/>
+                  </marker>
+                  <marker id="mk-a-a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--accent)"/>
+                  </marker>
+                </defs>
+
+                <g class="dg-node">
+                  <rect x="20" y="112" width="120" height="56" rx="6"/>
+                  <text class="n-title" x="80" y="136" text-anchor="middle">app.py</text>
+                  <text class="n-sub" x="80" y="152" text-anchor="middle">REPL · prompt_toolkit</text>
+                </g>
+
+                <g class="dg-node accent">
+                  <rect x="210" y="60" width="160" height="140" rx="6"/>
+                  <text class="n-title" x="290" y="82" text-anchor="middle">Agent</text>
+                  <text class="n-sub" x="290" y="98" text-anchor="middle">self.messages[]</text>
+                  <line x1="234" y1="112" x2="346" y2="112" stroke="var(--line)"/>
+                  <line x1="234" y1="124" x2="346" y2="124" stroke="var(--line)"/>
+                  <line x1="234" y1="136" x2="320" y2="136" stroke="var(--line)"/>
+                  <line x1="234" y1="148" x2="336" y2="148" stroke="var(--line)"/>
+                  <text class="n-sub" x="290" y="186" text-anchor="middle">the context window</text>
+                </g>
+
+                <g class="dg-node">
+                  <rect x="440" y="112" width="140" height="56" rx="6"/>
+                  <text class="n-title" x="510" y="136" text-anchor="middle">Claude API</text>
+                  <text class="n-sub" x="510" y="152" text-anchor="middle">messages.create()</text>
+                </g>
+
+                <g class="dg-node soft">
+                  <rect x="210" y="250" width="160" height="50" rx="6"/>
+                  <text class="n-title" x="290" y="272" text-anchor="middle">tools.py</text>
+                  <text class="n-sub" x="290" y="287" text-anchor="middle">execute_tool()</text>
+                </g>
+
+                <g class="dg-node soft">
+                  <rect x="440" y="250" width="140" height="50" rx="6"/>
+                  <text class="n-title" x="510" y="272" text-anchor="middle">KnowledgeBase</text>
+                  <text class="n-sub" x="510" y="287" text-anchor="middle">TF-IDF cosine sim</text>
+                </g>
+
+                <g class="dg-node soft">
+                  <rect x="620" y="250" width="120" height="50" rx="6"/>
+                  <text class="n-title" x="680" y="272" text-anchor="middle">knowledge_base/</text>
+                  <text class="n-sub" x="680" y="287" text-anchor="middle">*.md + frontmatter</text>
+                </g>
+
+                <line class="dg-edge" x1="140" y1="140" x2="205" y2="140" marker-end="url(#mk-m-a1)"/>
+                <text class="dg-edge-label" x="172" y="132" text-anchor="middle">run_turn()</text>
+
+                <line class="dg-edge" x1="371" y1="128" x2="435" y2="128" marker-end="url(#mk-m-a1)"/>
+                <text class="dg-edge-label" x="403" y="120" text-anchor="middle">system+tools+msgs</text>
+                <line class="dg-edge" x1="435" y1="156" x2="371" y2="156" marker-end="url(#mk-m-a1)"/>
+                <text class="dg-edge-label" x="403" y="172" text-anchor="middle">tool_use / text</text>
+                <text class="dg-edge-label" x="510" y="102" text-anchor="middle">≤ 10 rounds</text>
+
+                <line class="dg-edge" x1="270" y1="200" x2="270" y2="246" marker-end="url(#mk-m-a1)"/>
+                <text class="dg-edge-label" x="150" y="228" text-anchor="start">execute_tool()</text>
+
+                <line class="dg-edge accent" x1="316" y1="246" x2="316" y2="200" marker-end="url(#mk-a-a1)"/>
+                <text class="dg-edge-label accent" x="330" y="228" text-anchor="start">result → messages[]</text>
+
+                <line class="dg-edge" x1="370" y1="272" x2="435" y2="272" marker-end="url(#mk-m-a1)"/>
+                <text class="dg-edge-label" x="403" y="264" text-anchor="middle">search() / get()</text>
+
+                <line class="dg-edge" x1="580" y1="272" x2="615" y2="272" marker-end="url(#mk-m-a1)"/>
+              </svg>
+            </div>
+            <figcaption>Two loops, one shared list. The outer loop bounces between <code>Agent</code> and Claude up to <code>MAX_TOOL_ROUNDS</code> times; the inner branch to <code>tools.py</code> and the TF-IDF <code>KnowledgeBase</code> is how search results get written back into <code>messages[]</code> — permanently, until <code>/clear</code>.</figcaption>
+          </figure>
+        </div>
+
+        <div class="diagram-block">
+          <h3>Sequence — one turn, start to finish</h3>
+          <figure>
+            <div class="diagram-scroll">
+              <svg viewBox="0 0 780 660" role="img" aria-label="Sequence diagram: a user question travels from the REPL through the Agent's message list to the Claude API, which requests a document search; the tool result is appended to the context, the API is called a second time, and the final answer returns to the user with token stats.">
+                <defs>
+                  <marker id="mk-m-s1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--muted)"/>
+                  </marker>
+                  <marker id="mk-a-s1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--accent)"/>
+                  </marker>
+                </defs>
+
+                <text class="dg-lane-label" x="100" y="24" text-anchor="middle">You &amp; app.py</text>
+                <text class="dg-lane-label" x="300" y="24" text-anchor="middle">Agent · messages[]</text>
+                <text class="dg-lane-label" x="500" y="24" text-anchor="middle">Claude API</text>
+                <text class="dg-lane-label" x="700" y="24" text-anchor="middle">tools.py + KB</text>
+                <line class="dg-lane-line" x1="100" y1="36" x2="100" y2="640"/>
+                <line class="dg-lane-line" x1="300" y1="36" x2="300" y2="640"/>
+                <line class="dg-lane-line" x1="500" y1="36" x2="500" y2="640"/>
+                <line class="dg-lane-line" x1="700" y1="36" x2="700" y2="640"/>
+
+                <!-- step template: badge at x=24, arrow at y -->
+                <!-- 1 -->
+                <g class="dg-step-badge"><circle cx="24" cy="60" r="10"/><text x="24" y="61">1</text></g>
+                <line class="dg-edge" x1="100" y1="60" x2="150" y2="60" marker-end="url(#mk-m-s1)"/>
+                <text class="dg-edge-label" x="106" y="52">type a question</text>
+
+                <!-- 2 -->
+                <g class="dg-step-badge"><circle cx="24" cy="104" r="10"/><text x="24" y="105">2</text></g>
+                <line class="dg-edge" x1="100" y1="104" x2="296" y2="104" marker-end="url(#mk-m-s1)"/>
+                <text class="dg-edge-label" x="200" y="96" text-anchor="middle">run_turn(text)</text>
+
+                <!-- 3 self -->
+                <g class="dg-step-badge"><circle cx="24" cy="148" r="10"/><text x="24" y="149">3</text></g>
+                <line class="dg-edge" x1="300" y1="148" x2="360" y2="148" marker-end="url(#mk-m-s1)"/>
+                <text class="dg-edge-label" x="300" y="140">append user msg → messages[]</text>
+
+                <!-- 4 -->
+                <g class="dg-step-badge"><circle cx="24" cy="192" r="10"/><text x="24" y="193">4</text></g>
+                <line class="dg-edge" x1="300" y1="192" x2="496" y2="192" marker-end="url(#mk-m-s1)"/>
+                <text class="dg-edge-label" x="400" y="184" text-anchor="middle">messages.create(system, tools, messages[])</text>
+
+                <!-- 5 -->
+                <g class="dg-step-badge"><circle cx="24" cy="236" r="10"/><text x="24" y="237">5</text></g>
+                <line class="dg-edge" x1="500" y1="236" x2="304" y2="236" marker-end="url(#mk-m-s1)"/>
+                <text class="dg-edge-label" x="400" y="228" text-anchor="middle">stop_reason=tool_use: search_documents</text>
+
+                <!-- 6 self -->
+                <g class="dg-step-badge"><circle cx="24" cy="280" r="10"/><text x="24" y="281">6</text></g>
+                <line class="dg-edge" x1="300" y1="280" x2="360" y2="280" marker-end="url(#mk-m-s1)"/>
+                <text class="dg-edge-label" x="300" y="272">append assistant (tool_use)</text>
+
+                <!-- 7 -->
+                <g class="dg-step-badge"><circle cx="24" cy="324" r="10"/><text x="24" y="325">7</text></g>
+                <line class="dg-edge" x1="300" y1="324" x2="696" y2="324" marker-end="url(#mk-m-s1)"/>
+                <text class="dg-edge-label" x="500" y="316" text-anchor="middle">execute_tool('search_documents')</text>
+
+                <!-- 8 -->
+                <g class="dg-step-badge"><circle cx="24" cy="368" r="10"/><text x="24" y="369">8</text></g>
+                <line class="dg-edge" x1="700" y1="368" x2="304" y2="368" marker-end="url(#mk-m-s1)"/>
+                <text class="dg-edge-label" x="500" y="360" text-anchor="middle">KB.search() → ranked snippets</text>
+
+                <!-- 9 self accent -->
+                <g class="dg-step-badge accent"><circle cx="24" cy="412" r="10"/><text x="24" y="413">9</text></g>
+                <line class="dg-edge accent" x1="300" y1="412" x2="360" y2="412" marker-end="url(#mk-a-s1)"/>
+                <text class="dg-edge-label accent" x="300" y="404">append tool_result → messages[] (+N tok, permanent)</text>
+
+                <!-- 10 -->
+                <g class="dg-step-badge"><circle cx="24" cy="456" r="10"/><text x="24" y="457">10</text></g>
+                <line class="dg-edge" x1="300" y1="456" x2="496" y2="456" marker-end="url(#mk-m-s1)"/>
+                <text class="dg-edge-label" x="400" y="448" text-anchor="middle">round 2: call again</text>
+
+                <!-- 11 -->
+                <g class="dg-step-badge"><circle cx="24" cy="500" r="10"/><text x="24" y="501">11</text></g>
+                <line class="dg-edge" x1="500" y1="500" x2="304" y2="500" marker-end="url(#mk-m-s1)"/>
+                <text class="dg-edge-label" x="400" y="492" text-anchor="middle">final text (stop_reason ≠ tool_use)</text>
+
+                <!-- 12 -->
+                <g class="dg-step-badge"><circle cx="24" cy="544" r="10"/><text x="24" y="545">12</text></g>
+                <line class="dg-edge" x1="300" y1="544" x2="104" y2="544" marker-end="url(#mk-m-s1)"/>
+                <text class="dg-edge-label" x="200" y="536" text-anchor="middle">return final_text + stats</text>
+
+                <!-- 13 self -->
+                <g class="dg-step-badge"><circle cx="24" cy="588" r="10"/><text x="24" y="589">13</text></g>
+                <line class="dg-edge" x1="100" y1="588" x2="160" y2="588" marker-end="url(#mk-m-s1)"/>
+                <text class="dg-edge-label" x="100" y="580">show answer — input/output tokens climb</text>
+              </svg>
+            </div>
+            <figcaption>Thirteen list entries can appear from one exchange. Step 9 is the moment a retrieved document becomes part of every future API call in the session — the receipt shows up as rising input tokens in <code>/stats</code>.</figcaption>
+          </figure>
+        </div>
+
+        <div class="notes">
+          <h3>What this teaches</h3>
+          <ul>
+            <li>The system prompt costs roughly 200 tokens on <em>every</em> call — a fixed tax paid for the whole conversation. <span class="src">agent.py:25</span></li>
+            <li><code>self.messages</code> grows monotonically; nothing leaves the window unless <code>/clear</code> resets it. <span class="src">agent.py:83–92</span></li>
+            <li>A single <code>get_document</code> call can inject 500+ tokens into the window — permanently, until cleared. <span class="src">agent.py:158–161</span></li>
+            <li>Tool schemas (~800 tokens) are sent on every call whether or not the model ends up using them. <span class="src">tools.py:5–9</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============================= PANEL 2 — ARTIFACTS ============================= -->
+      <section class="panel" id="panel-artifacts" role="tabpanel" aria-labelledby="tabbtn-artifacts" hidden>
+        <div class="panel-head">
+          <div class="path">demos/chat-with-artifacts/</div>
+          <h2>Chat with Artifacts</h2>
+          <p class="pitch">A FastAPI chat app where every reply can carry one structured artifact — a quiz, a flowchart, a flashcard deck. The system prompt is assembled fresh each turn from three layers with three different price tags.</p>
+          <div class="chips">
+            <span class="chip lever">Writing Context</span>
+            <span class="chip">app.py</span>
+            <span class="chip">schemas.py</span>
+            <span class="chip">static/index.html</span>
+          </div>
+        </div>
+
+        <div class="diagram-block">
+          <h3>Architecture</h3>
+          <figure>
+            <div class="diagram-scroll">
+              <svg viewBox="0 0 780 340" role="img" aria-label="Browser posts to a FastAPI chat endpoint, which reads and writes per-session conversation state, assembles a three-layer system prompt fed by the artifact schema registry, and calls Claude with a single create_artifact tool.">
+                <defs>
+                  <marker id="mk-m-a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--muted)"/>
+                  </marker>
+                  <marker id="mk-a-a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--accent)"/>
+                  </marker>
+                </defs>
+
+                <g class="dg-node">
+                  <rect x="20" y="130" width="130" height="56" rx="6"/>
+                  <text class="n-title" x="85" y="154" text-anchor="middle">Browser</text>
+                  <text class="n-sub" x="85" y="170" text-anchor="middle">static/index.html</text>
+                </g>
+
+                <g class="dg-node">
+                  <rect x="215" y="130" width="150" height="56" rx="6"/>
+                  <text class="n-title" x="290" y="154" text-anchor="middle">/api/chat</text>
+                  <text class="n-sub" x="290" y="170" text-anchor="middle">app.py</text>
+                </g>
+
+                <g class="dg-node soft">
+                  <rect x="215" y="230" width="170" height="60" rx="6"/>
+                  <text class="n-title" x="300" y="252" text-anchor="middle">ConversationState</text>
+                  <text class="n-sub" x="300" y="267" text-anchor="middle">messages[] · artifact_registry</text>
+                </g>
+
+                <g class="dg-node accent">
+                  <rect x="440" y="30" width="190" height="118" rx="6"/>
+                  <text class="n-title" x="535" y="50" text-anchor="middle">build_system_prompt()</text>
+                  <rect x="454" y="60" width="162" height="24" rx="4" fill="var(--surface)" stroke="var(--line)"/>
+                  <text class="n-sub" x="535" y="76" text-anchor="middle">BASE_PERSONA · ~150 tok</text>
+                  <rect x="454" y="88" width="162" height="24" rx="4" fill="var(--surface)" stroke="var(--line)"/>
+                  <text class="n-sub" x="535" y="104" text-anchor="middle">ARTIFACT_DESCRIPTIONS · ~400 tok</text>
+                  <rect x="454" y="116" width="162" height="24" rx="4" fill="var(--surface)" stroke="var(--line)"/>
+                  <text class="n-sub" x="535" y="132" text-anchor="middle">dynamic summary · grows</text>
+                </g>
+
+                <g class="dg-node">
+                  <rect x="440" y="200" width="190" height="56" rx="6"/>
+                  <text class="n-title" x="535" y="224" text-anchor="middle">Claude API</text>
+                  <text class="n-sub" x="535" y="240" text-anchor="middle">tools=[create_artifact]</text>
+                </g>
+
+                <g class="dg-node soft">
+                  <rect x="670" y="30" width="100" height="90" rx="6"/>
+                  <text class="n-title" x="720" y="52" text-anchor="middle">schemas.py</text>
+                  <text class="n-sub" x="720" y="67" text-anchor="middle">8 artifact</text>
+                  <text class="n-sub" x="720" y="80" text-anchor="middle">types, one</text>
+                  <text class="n-sub" x="720" y="93" text-anchor="middle">flat schema</text>
+                </g>
+
+                <line class="dg-edge" x1="150" y1="150" x2="211" y2="150" marker-end="url(#mk-m-a2)"/>
+                <text class="dg-edge-label" x="180" y="142" text-anchor="middle">POST</text>
+                <line class="dg-edge" x1="211" y1="168" x2="150" y2="168" marker-end="url(#mk-m-a2)"/>
+                <text class="dg-edge-label" x="180" y="184" text-anchor="middle">text + artifact</text>
+
+                <line class="dg-edge" x1="290" y1="186" x2="290" y2="226" marker-end="url(#mk-m-a2)"/>
+                <text class="dg-edge-label" x="130" y="212" text-anchor="start">append + read</text>
+
+                <line class="dg-edge" x1="365" y1="145" x2="435" y2="100" marker-end="url(#mk-m-a2)"/>
+                <text class="dg-edge-label" x="400" y="130" text-anchor="middle">assemble</text>
+
+                <line class="dg-edge" x1="670" y1="75" x2="632" y2="90" marker-end="url(#mk-m-a2)"/>
+                <text class="dg-edge-label" x="655" y="65" text-anchor="middle">catalog</text>
+
+                <line class="dg-edge" x1="365" y1="175" x2="435" y2="220" marker-end="url(#mk-m-a2)"/>
+                <text class="dg-edge-label" x="400" y="205" text-anchor="middle">system + messages</text>
+
+                <line class="dg-edge accent" x1="440" y1="240" x2="390" y2="270" marker-end="url(#mk-a-a2)"/>
+                <text class="dg-edge-label accent" x="440" y="285" text-anchor="middle">register(artifact)</text>
+              </svg>
+            </div>
+            <figcaption>The system prompt is rebuilt on every request from three layers of different weight — one fixed, one static-per-session, one that grows as artifacts accumulate. <code>schemas.py</code> feeds both the prose catalog and the flat tool schema Claude fills in.</figcaption>
+          </figure>
+        </div>
+
+        <div class="diagram-block">
+          <h3>Sequence — one message, one artifact</h3>
+          <figure>
+            <div class="diagram-scroll">
+              <svg viewBox="0 0 780 560" role="img" aria-label="Sequence diagram: the browser posts a chat message, the backend appends it to session state, rebuilds the layered system prompt, calls Claude for a text reply plus one artifact, registers that artifact so the next turn's system prompt grows, and returns the result to the browser.">
+                <defs>
+                  <marker id="mk-m-s2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--muted)"/>
+                  </marker>
+                  <marker id="mk-a-s2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--accent)"/>
+                  </marker>
+                </defs>
+
+                <text class="dg-lane-label" x="100" y="24" text-anchor="middle">Browser</text>
+                <text class="dg-lane-label" x="300" y="24" text-anchor="middle">/api/chat</text>
+                <text class="dg-lane-label" x="500" y="24" text-anchor="middle">ConversationState</text>
+                <text class="dg-lane-label" x="700" y="24" text-anchor="middle">Claude API</text>
+                <line class="dg-lane-line" x1="100" y1="36" x2="100" y2="540"/>
+                <line class="dg-lane-line" x1="300" y1="36" x2="300" y2="540"/>
+                <line class="dg-lane-line" x1="500" y1="36" x2="500" y2="540"/>
+                <line class="dg-lane-line" x1="700" y1="36" x2="700" y2="540"/>
+
+                <g class="dg-step-badge"><circle cx="24" cy="60" r="10"/><text x="24" y="61">1</text></g>
+                <line class="dg-edge" x1="100" y1="60" x2="296" y2="60" marker-end="url(#mk-m-s2)"/>
+                <text class="dg-edge-label" x="200" y="52" text-anchor="middle">POST /api/chat {message, session_id}</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="104" r="10"/><text x="24" y="105">2</text></g>
+                <line class="dg-edge" x1="300" y1="104" x2="496" y2="104" marker-end="url(#mk-m-s2)"/>
+                <text class="dg-edge-label" x="400" y="96" text-anchor="middle">append user msg → messages[]</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="148" r="10"/><text x="24" y="149">3</text></g>
+                <line class="dg-edge" x1="300" y1="148" x2="360" y2="148" marker-end="url(#mk-m-s2)"/>
+                <text class="dg-edge-label" x="300" y="140">build_system_prompt(): persona + catalog + [dynamic]</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="192" r="10"/><text x="24" y="193">4</text></g>
+                <line class="dg-edge" x1="300" y1="192" x2="696" y2="192" marker-end="url(#mk-m-s2)"/>
+                <text class="dg-edge-label" x="500" y="184" text-anchor="middle">messages.create(system, tools=[create_artifact], messages)</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="236" r="10"/><text x="24" y="237">5</text></g>
+                <line class="dg-edge" x1="700" y1="236" x2="304" y2="236" marker-end="url(#mk-m-s2)"/>
+                <text class="dg-edge-label" x="500" y="228" text-anchor="middle">text + tool_use(create_artifact, type=…)</text>
+
+                <g class="dg-step-badge accent"><circle cx="24" cy="280" r="10"/><text x="24" y="281">6</text></g>
+                <line class="dg-edge accent" x1="300" y1="280" x2="496" y2="280" marker-end="url(#mk-a-s2)"/>
+                <text class="dg-edge-label accent" x="400" y="272" text-anchor="middle">register(artifact) — layer 3 will grow next turn</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="324" r="10"/><text x="24" y="325">7</text></g>
+                <line class="dg-edge" x1="300" y1="324" x2="496" y2="324" marker-end="url(#mk-m-s2)"/>
+                <text class="dg-edge-label" x="400" y="316" text-anchor="middle">append assistant msg + tool_result → messages[]</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="368" r="10"/><text x="24" y="369">8</text></g>
+                <line class="dg-edge" x1="300" y1="368" x2="104" y2="368" marker-end="url(#mk-m-s2)"/>
+                <text class="dg-edge-label" x="200" y="360" text-anchor="middle">{ text, artifact, stats }</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="412" r="10"/><text x="24" y="413">9</text></g>
+                <line class="dg-edge" x1="100" y1="412" x2="160" y2="412" marker-end="url(#mk-m-s2)"/>
+                <text class="dg-edge-label" x="100" y="404">render artifact component</text>
+
+                <g class="dg-step-badge accent"><circle cx="24" cy="472" r="10"/><text x="24" y="473">10</text></g>
+                <line class="dg-edge accent dashed" x1="300" y1="472" x2="696" y2="472" marker-end="url(#mk-a-s2)"/>
+                <text class="dg-edge-label accent" x="500" y="460" text-anchor="middle">next turn: system prompt now lists</text>
+                <text class="dg-edge-label accent" x="500" y="474" text-anchor="middle">"Artifacts created so far (N)"</text>
+              </svg>
+            </div>
+            <figcaption>Step 6 is quiet in the code — one line, <code>registry.register()</code> — but it's why the assistant remembers what it already built instead of re-generating the same flashcards next turn.</figcaption>
+          </figure>
+        </div>
+
+        <div class="notes">
+          <h3>What this teaches</h3>
+          <ul>
+            <li>Three layers, three lifecycles: fixed persona (~150 tok), static artifact catalog (~400 tok), and a dynamic summary that only grows once artifacts exist. <span class="src">app.py:42–53</span></li>
+            <li>One flat tool schema merges all 8 artifact types; the <code>artifact_type</code> enum is the discriminator, since the API forbids top-level <code>anyOf</code>/<code>oneOf</code>. <span class="src">schemas.py:374–386</span></li>
+            <li>The model's own <code>tool_use</code> block is stored back into history verbatim — strip it and the model "forgets" what it already created. <span class="src">app.py:202–209</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============================= PANEL 3 — LIVE DEMO ============================= -->
+      <section class="panel" id="panel-livedemo" role="tabpanel" aria-labelledby="tabbtn-livedemo" hidden>
+        <div class="panel-head">
+          <div class="path">demos/live-demo-chat-agent-ctx-eng-overview/</div>
+          <h2>Chat Agent Overview</h2>
+          <p class="pitch">Three independent scripts, each one rung more capable than the last — from a single structured-output call, to a browser quiz, to a full tool-calling loop that mixes a server-side tool with local ones.</p>
+          <div class="chips">
+            <span class="chip lever">Structured Output</span>
+            <span class="chip">structured_output_example.py</span>
+            <span class="chip">quiz_app.py</span>
+            <span class="chip">chat.py</span>
+          </div>
+        </div>
+
+        <div class="diagram-block">
+          <h3>Architecture — three rungs</h3>
+          <figure>
+            <div class="diagram-scroll">
+              <svg viewBox="0 0 780 360" role="img" aria-label="Three stacked scripts of increasing complexity: structured_output_example.py parses one prompt into a Quiz object and prints it; quiz_app.py adds a FastAPI endpoint and browser UI that grades client-side; chat.py adds a full agent loop with four tools, one of which runs server-side.">
+                <defs>
+                  <marker id="mk-m-a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--muted)"/>
+                  </marker>
+                </defs>
+
+                <!-- rung A -->
+                <g class="dg-node soft"><rect x="20" y="20" width="150" height="46" rx="6"/><text class="n-title" x="95" y="40" text-anchor="middle">user prompt</text><text class="n-sub" x="95" y="55" text-anchor="middle">one string</text></g>
+                <line class="dg-edge" x1="170" y1="43" x2="216" y2="43" marker-end="url(#mk-m-a3)"/>
+                <g class="dg-node soft"><rect x="220" y="20" width="180" height="46" rx="6"/><text class="n-title" x="310" y="40" text-anchor="middle">messages.parse()</text><text class="n-sub" x="310" y="55" text-anchor="middle">output_format=Quiz</text></g>
+                <line class="dg-edge" x1="400" y1="43" x2="446" y2="43" marker-end="url(#mk-m-a3)"/>
+                <g class="dg-node soft"><rect x="450" y="20" width="120" height="46" rx="6"/><text class="n-title" x="510" y="40" text-anchor="middle">print()</text><text class="n-sub" x="510" y="55" text-anchor="middle">Quiz object</text></g>
+                <text class="n-sub" x="700" y="43" text-anchor="middle" font-style="italic">structured_output_example.py</text>
+
+                <line class="dg-edge dashed" x1="95" y1="66" x2="95" y2="106" marker-end="url(#mk-m-a3)"/>
+                <text class="dg-edge-label" x="105" y="88">+ web UI, browser-side grading,</text>
+                <text class="dg-edge-label" x="105" y="100">richer schema (options, correct_index)</text>
+
+                <!-- rung B -->
+                <g class="dg-node soft"><rect x="20" y="110" width="120" height="46" rx="6"/><text class="n-title" x="80" y="130" text-anchor="middle">Browser</text><text class="n-sub" x="80" y="145" text-anchor="middle">chat box + grader</text></g>
+                <line class="dg-edge" x1="140" y1="133" x2="176" y2="133" marker-end="url(#mk-m-a3)"/>
+                <g class="dg-node soft"><rect x="180" y="110" width="150" height="46" rx="6"/><text class="n-title" x="255" y="130" text-anchor="middle">/api/quiz</text><text class="n-sub" x="255" y="145" text-anchor="middle">FastAPI</text></g>
+                <line class="dg-edge" x1="330" y1="133" x2="376" y2="133" marker-end="url(#mk-m-a3)"/>
+                <g class="dg-node soft"><rect x="380" y="110" width="190" height="46" rx="6"/><text class="n-title" x="475" y="130" text-anchor="middle">messages.parse()</text><text class="n-sub" x="475" y="145" text-anchor="middle">Question w/ correct_index</text></g>
+                <text class="n-sub" x="700" y="133" text-anchor="middle" font-style="italic">quiz_app.py</text>
+
+                <line class="dg-edge dashed" x1="80" y1="156" x2="80" y2="196" marker-end="url(#mk-m-a3)"/>
+                <text class="dg-edge-label" x="90" y="178">+ tool-calling loop, 4 tools</text>
+                <text class="dg-edge-label" x="90" y="190">(1 server-side, 3 local)</text>
+
+                <!-- rung C -->
+                <g class="dg-node soft"><rect x="20" y="200" width="120" height="46" rx="6"/><text class="n-title" x="80" y="220" text-anchor="middle">REPL</text><text class="n-sub" x="80" y="235" text-anchor="middle">chat.py</text></g>
+                <line class="dg-edge" x1="140" y1="223" x2="176" y2="223" marker-end="url(#mk-m-a3)"/>
+                <g class="dg-node accent"><rect x="180" y="200" width="160" height="46" rx="6"/><text class="n-title" x="260" y="220" text-anchor="middle">Agent</text><text class="n-sub" x="260" y="235" text-anchor="middle">messages[]</text></g>
+                <line class="dg-edge" x1="340" y1="223" x2="376" y2="223" marker-end="url(#mk-m-a3)"/>
+                <g class="dg-node"><rect x="380" y="200" width="190" height="46" rx="6"/><text class="n-title" x="475" y="220" text-anchor="middle">Claude API</text><text class="n-sub" x="475" y="235" text-anchor="middle">4 tools offered</text></g>
+                <text class="n-sub" x="700" y="223" text-anchor="middle" font-style="italic">chat.py</text>
+
+                <g class="dg-node dashed"><rect x="380" y="270" width="190" height="46" rx="6"/><text class="n-title" x="475" y="290" text-anchor="middle">web_search</text><text class="n-sub" x="475" y="305" text-anchor="middle">runs server-side</text></g>
+                <line class="dg-edge dashed" x1="475" y1="246" x2="475" y2="266" marker-end="url(#mk-m-a3)"/>
+
+                <g class="dg-node soft"><rect x="180" y="270" width="160" height="46" rx="6"/><text class="n-title" x="260" y="290" text-anchor="middle">local fs</text><text class="n-sub" x="260" y="305" text-anchor="middle">read/create/search_files</text></g>
+                <line class="dg-edge" x1="260" y1="246" x2="260" y2="266" marker-end="url(#mk-m-a3)"/>
+              </svg>
+            </div>
+            <figcaption>Same idea, three ceilings. Each rung keeps the schema-forcing trick from the one above and adds one new capability — a UI, then a tool loop split between code Anthropic runs for you and code your machine runs.</figcaption>
+          </figure>
+        </div>
+
+        <div class="diagram-block">
+          <h3>Sequence — chat.py's tool loop</h3>
+          <figure>
+            <div class="diagram-scroll">
+              <svg viewBox="0 0 780 500" role="img" aria-label="Sequence diagram: the user's question goes to the agent loop, which calls Claude with four tools offered; web_search is resolved by Anthropic directly, while search_files and read_file are dispatched to the local filesystem across two rounds before the final answer is printed.">
+                <defs>
+                  <marker id="mk-m-s3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--muted)"/>
+                  </marker>
+                  <marker id="mk-a-s3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--accent)"/>
+                  </marker>
+                </defs>
+
+                <text class="dg-lane-label" x="100" y="24" text-anchor="middle">You &amp; REPL</text>
+                <text class="dg-lane-label" x="300" y="24" text-anchor="middle">Agent · messages[]</text>
+                <text class="dg-lane-label" x="500" y="24" text-anchor="middle">Claude API</text>
+                <text class="dg-lane-label" x="700" y="24" text-anchor="middle">Local fs / tools</text>
+                <line class="dg-lane-line" x1="100" y1="36" x2="100" y2="480"/>
+                <line class="dg-lane-line" x1="300" y1="36" x2="300" y2="480"/>
+                <line class="dg-lane-line" x1="500" y1="36" x2="500" y2="480"/>
+                <line class="dg-lane-line" x1="700" y1="36" x2="700" y2="480"/>
+
+                <g class="dg-step-badge"><circle cx="24" cy="60" r="10"/><text x="24" y="61">1</text></g>
+                <line class="dg-edge" x1="100" y1="60" x2="160" y2="60" marker-end="url(#mk-m-s3)"/>
+                <text class="dg-edge-label" x="100" y="52">"find X, then read it"</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="104" r="10"/><text x="24" y="105">2</text></g>
+                <line class="dg-edge" x1="100" y1="104" x2="296" y2="104" marker-end="url(#mk-m-s3)"/>
+                <text class="dg-edge-label" x="200" y="96" text-anchor="middle">run_turn(text)</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="148" r="10"/><text x="24" y="149">3</text></g>
+                <line class="dg-edge" x1="300" y1="148" x2="496" y2="148" marker-end="url(#mk-m-s3)"/>
+                <text class="dg-edge-label" x="400" y="140" text-anchor="middle">call API — tools: web_search, read_file, create_file, search_files</text>
+
+                <g class="dg-step-badge accent"><circle cx="24" cy="192" r="10"/><text x="24" y="193">4</text></g>
+                <line class="dg-edge accent dashed" x1="500" y1="192" x2="560" y2="192" marker-end="url(#mk-a-s3)"/>
+                <text class="dg-edge-label accent" x="500" y="184">web_search resolved by Anthropic —</text>
+                <text class="dg-edge-label accent" x="500" y="206">never touches TOOL_FUNCTIONS</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="248" r="10"/><text x="24" y="249">5</text></g>
+                <line class="dg-edge" x1="500" y1="248" x2="304" y2="248" marker-end="url(#mk-m-s3)"/>
+                <text class="dg-edge-label" x="400" y="240" text-anchor="middle">tool_use: search_files(folder_path)</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="292" r="10"/><text x="24" y="293">6</text></g>
+                <line class="dg-edge" x1="300" y1="292" x2="696" y2="292" marker-start="url(#mk-m-s3)" marker-end="url(#mk-m-s3)"/>
+                <text class="dg-edge-label" x="500" y="284" text-anchor="middle">execute_tool() ⇄ os.walk() → matching paths</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="336" r="10"/><text x="24" y="337">7</text></g>
+                <line class="dg-edge" x1="300" y1="336" x2="496" y2="336" marker-end="url(#mk-m-s3)"/>
+                <text class="dg-edge-label" x="400" y="328" text-anchor="middle">round 2 — same pattern for read_file(filepath)</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="380" r="10"/><text x="24" y="381">8</text></g>
+                <line class="dg-edge" x1="300" y1="380" x2="696" y2="380" marker-end="url(#mk-m-s3)"/>
+                <text class="dg-edge-label" x="500" y="372" text-anchor="middle">execute_tool('read_file') ⇄ file contents</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="424" r="10"/><text x="24" y="425">9</text></g>
+                <line class="dg-edge" x1="500" y1="424" x2="304" y2="424" marker-end="url(#mk-m-s3)"/>
+                <text class="dg-edge-label" x="400" y="416" text-anchor="middle">round 3: final text (stop_reason ≠ tool_use)</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="468" r="10"/><text x="24" y="469">10</text></g>
+                <line class="dg-edge" x1="300" y1="468" x2="104" y2="468" marker-end="url(#mk-m-s3)"/>
+                <text class="dg-edge-label" x="200" y="460" text-anchor="middle">print answer</text>
+              </svg>
+            </div>
+            <figcaption>Step 4 is the one worth pausing on: <code>TOOL_FUNCTIONS</code> maps <code>"web_search"</code> to an empty string — the local dispatcher never runs it, because Anthropic's infrastructure already resolved it before the response reached your code.</figcaption>
+          </figure>
+        </div>
+
+        <div class="notes">
+          <h3>What this teaches</h3>
+          <ul>
+            <li><code>structured_output_example.py</code> is the smallest possible <code>messages.parse</code> call — one prompt, one Pydantic schema, one parsed object, no server.</li>
+            <li><code>quiz_app.py</code> extends that schema with <code>correct_index</code> so grading happens entirely client-side, with zero extra API calls.</li>
+            <li><code>chat.py</code> mixes a server-side tool (<code>web_search</code>) with local ones — the same <code>tools</code> array, two very different execution paths. <span class="src">chat.py:108–112</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============================= PANEL 4 — FULL AGENT APP ============================= -->
+      <section class="panel" id="panel-fullagent" role="tabpanel" aria-labelledby="tabbtn-fullagent" hidden>
+        <div class="panel-head">
+          <div class="path">demos/full_agent_app.py</div>
+          <h2>Agentic-RAG CLI</h2>
+          <p class="pitch">The same document-retrieval idea as demo 01, rebuilt on <code>claude_agent_sdk</code>. The tool loop, and the context window it runs on, now live inside <code>ClaudeSDKClient</code> — your code never sees a <code>messages</code> list.</p>
+          <div class="chips">
+            <span class="chip lever">Delegating the Loop</span>
+            <span class="chip">full_agent_app.py</span>
+            <span class="chip">claude_agent_sdk</span>
+          </div>
+        </div>
+
+        <div class="diagram-block">
+          <h3>Architecture</h3>
+          <figure>
+            <div class="diagram-scroll">
+              <svg viewBox="0 0 780 320" role="img" aria-label="A CLI sends queries into ClaudeSDKClient, an opaque box that manages its own context and talks to the Claude API and to an in-process MCP docs server; the docs server exposes list, read, and search tools over a folder of markdown files.">
+                <defs>
+                  <marker id="mk-m-a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--muted)"/>
+                  </marker>
+                  <marker id="mk-a-a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--accent)"/>
+                  </marker>
+                </defs>
+
+                <g class="dg-node">
+                  <rect x="20" y="132" width="120" height="56" rx="6"/>
+                  <text class="n-title" x="80" y="156" text-anchor="middle">CLI</text>
+                  <text class="n-sub" x="80" y="172" text-anchor="middle">main() · anyio</text>
+                </g>
+
+                <g class="dg-node dashed">
+                  <rect x="190" y="112" width="190" height="96" rx="6"/>
+                  <text class="n-title" x="285" y="136" text-anchor="middle">ClaudeSDKClient</text>
+                  <text class="n-sub" x="285" y="152" text-anchor="middle">context managed</text>
+                  <text class="n-sub" x="285" y="165" text-anchor="middle">internally — opaque</text>
+                  <text class="n-sub" x="285" y="188" text-anchor="middle">to your code</text>
+                </g>
+
+                <g class="dg-node">
+                  <rect x="430" y="40" width="150" height="56" rx="6"/>
+                  <text class="n-title" x="505" y="64" text-anchor="middle">Claude API</text>
+                  <text class="n-sub" x="505" y="80" text-anchor="middle">max_turns=10</text>
+                </g>
+
+                <g class="dg-node soft">
+                  <rect x="430" y="184" width="180" height="70" rx="6"/>
+                  <text class="n-title" x="520" y="206" text-anchor="middle">docs MCP server</text>
+                  <text class="n-sub" x="520" y="221" text-anchor="middle">list_docs · read_doc</text>
+                  <text class="n-sub" x="520" y="234" text-anchor="middle">search_docs</text>
+                </g>
+
+                <g class="dg-node soft">
+                  <rect x="650" y="192" width="110" height="54" rx="6"/>
+                  <text class="n-title" x="705" y="212" text-anchor="middle">KB_PATH</text>
+                  <text class="n-sub" x="705" y="228" text-anchor="middle">*.md files</text>
+                </g>
+
+                <line class="dg-edge" x1="140" y1="160" x2="186" y2="160" marker-end="url(#mk-m-a4)"/>
+                <text class="dg-edge-label" x="163" y="152" text-anchor="middle">query()</text>
+
+                <line class="dg-edge dashed" x1="330" y1="112" x2="450" y2="94" marker-start="url(#mk-m-a4)" marker-end="url(#mk-m-a4)"/>
+                <text class="dg-edge-label" x="400" y="88" text-anchor="middle">loop managed internally</text>
+
+                <line class="dg-edge" x1="380" y1="185" x2="426" y2="205" marker-end="url(#mk-m-a4)"/>
+                <text class="dg-edge-label" x="390" y="205" text-anchor="middle">auto-dispatch</text>
+
+                <line class="dg-edge" x1="610" y1="215" x2="645" y2="215" marker-end="url(#mk-m-a4)"/>
+
+                <line class="dg-edge accent" x1="80" y1="132" x2="80" y2="98" marker-end="url(#mk-a-a4)"/>
+                <text class="dg-edge-label accent" x="20" y="88" text-anchor="start">receive_response() streams blocks back</text>
+              </svg>
+            </div>
+            <figcaption>The dashed border is the point: unlike demo 01's <code>Agent</code>, there is no <code>messages[]</code> in this file to print or inspect. The SDK owns it, and dispatches every <code>mcp__docs__*</code> tool call without your code writing an <code>execute_tool()</code> branch.</figcaption>
+          </figure>
+        </div>
+
+        <div class="diagram-block">
+          <h3>Sequence — one question, SDK-managed</h3>
+          <figure>
+            <div class="diagram-scroll">
+              <svg viewBox="0 0 780 500" role="img" aria-label="Sequence diagram: the CLI queries ClaudeSDKClient, which sends the request to Claude, receives a tool_use for search_docs, auto-dispatches it to the MCP docs server, continues the loop for read_doc, and streams the final answer back without the application code ever handling the context list.">
+                <defs>
+                  <marker id="mk-m-s4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--muted)"/>
+                  </marker>
+                  <marker id="mk-a-s4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="var(--accent)"/>
+                  </marker>
+                </defs>
+
+                <text class="dg-lane-label" x="100" y="24" text-anchor="middle">You &amp; CLI</text>
+                <text class="dg-lane-label" x="300" y="24" text-anchor="middle">ClaudeSDKClient</text>
+                <text class="dg-lane-label" x="500" y="24" text-anchor="middle">Claude API</text>
+                <text class="dg-lane-label" x="700" y="24" text-anchor="middle">docs server + KB_PATH</text>
+                <line class="dg-lane-line" x1="100" y1="36" x2="100" y2="480"/>
+                <line class="dg-lane-line" x1="300" y1="36" x2="300" y2="480"/>
+                <line class="dg-lane-line" x1="500" y1="36" x2="500" y2="480"/>
+                <line class="dg-lane-line" x1="700" y1="36" x2="700" y2="480"/>
+
+                <g class="dg-step-badge"><circle cx="24" cy="60" r="10"/><text x="24" y="61">1</text></g>
+                <line class="dg-edge" x1="100" y1="60" x2="160" y2="60" marker-end="url(#mk-m-s4)"/>
+                <text class="dg-edge-label" x="100" y="52">ask a question</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="104" r="10"/><text x="24" y="105">2</text></g>
+                <line class="dg-edge" x1="100" y1="104" x2="296" y2="104" marker-end="url(#mk-m-s4)"/>
+                <text class="dg-edge-label" x="200" y="96" text-anchor="middle">await client.query(user_input)</text>
+
+                <g class="dg-step-badge accent"><circle cx="24" cy="148" r="10"/><text x="24" y="149">3</text></g>
+                <line class="dg-edge accent" x1="300" y1="148" x2="496" y2="148" marker-end="url(#mk-a-s4)"/>
+                <text class="dg-edge-label accent" x="400" y="140" text-anchor="middle">request (system_prompt, allowed_tools) — internal context, not exposed</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="192" r="10"/><text x="24" y="193">4</text></g>
+                <line class="dg-edge" x1="500" y1="192" x2="304" y2="192" marker-end="url(#mk-m-s4)"/>
+                <text class="dg-edge-label" x="400" y="184" text-anchor="middle">tool_use: mcp__docs__search_docs(query)</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="236" r="10"/><text x="24" y="237">5</text></g>
+                <line class="dg-edge" x1="300" y1="236" x2="696" y2="236" marker-start="url(#mk-m-s4)" marker-end="url(#mk-m-s4)"/>
+                <text class="dg-edge-label" x="500" y="228" text-anchor="middle">auto-dispatched ⇄ scored snippet results</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="280" r="10"/><text x="24" y="281">6</text></g>
+                <line class="dg-edge" x1="300" y1="280" x2="360" y2="280" marker-end="url(#mk-m-s4)"/>
+                <text class="dg-edge-label" x="300" y="272">appends tool_result — your code never sees it</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="324" r="10"/><text x="24" y="325">7</text></g>
+                <line class="dg-edge" x1="300" y1="324" x2="496" y2="324" marker-end="url(#mk-m-s4)"/>
+                <text class="dg-edge-label" x="400" y="316" text-anchor="middle">loop continues automatically</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="368" r="10"/><text x="24" y="369">8</text></g>
+                <line class="dg-edge" x1="500" y1="368" x2="304" y2="368" marker-end="url(#mk-m-s4)"/>
+                <text class="dg-edge-label" x="400" y="360" text-anchor="middle">tool_use: mcp__docs__read_doc(filename)</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="412" r="10"/><text x="24" y="413">9</text></g>
+                <line class="dg-edge" x1="300" y1="412" x2="696" y2="412" marker-start="url(#mk-m-s4)" marker-end="url(#mk-m-s4)"/>
+                <text class="dg-edge-label" x="500" y="404" text-anchor="middle">auto-dispatched ⇄ full file text</text>
+
+                <g class="dg-step-badge"><circle cx="24" cy="456" r="10"/><text x="24" y="457">10</text></g>
+                <line class="dg-edge" x1="500" y1="456" x2="104" y2="456" marker-end="url(#mk-m-s4)"/>
+                <text class="dg-edge-label" x="300" y="448" text-anchor="middle">final TextBlock → receive_response() yields it → stream_response() prints</text>
+              </svg>
+            </div>
+            <figcaption>Step 3 is drawn in accent for a reason: it's the exact hop that demo 01 makes visible as <code>self.messages</code> and this demo makes invisible. Same lever, opposite default.</figcaption>
+          </figure>
+        </div>
+
+        <div class="notes">
+          <h3>What this teaches</h3>
+          <ul>
+            <li><code>ClaudeSDKClient</code> owns the context window internally — there's no <code>messages</code> list in this file to inspect, unlike <code>agentic-retrieval/agent.py</code>.</li>
+            <li>Tools are plain async functions decorated with <code>@tool</code>, served over an in-process MCP server instead of hand-written JSON schemas. <span class="src">full_agent_app.py:48–104</span></li>
+            <li><code>max_turns=10</code> on <code>ClaudeAgentOptions</code> is the SDK's version of <code>agent.py</code>'s <code>MAX_TOOL_ROUNDS</code> safety limit. <span class="src">full_agent_app.py:138</span></li>
+          </ul>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
+    var panels = Array.prototype.slice.call(document.querySelectorAll('.panel'));
+
+    function activate(key) {
+      buttons.forEach(function (b) {
+        var on = b.getAttribute('data-tab') === key;
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      panels.forEach(function (p) {
+        var on = p.id === 'panel-' + key;
+        if (on) { p.removeAttribute('hidden'); } else { p.setAttribute('hidden', ''); }
+      });
+    }
+
+    buttons.forEach(function (b, i) {
+      b.addEventListener('click', function () { activate(b.getAttribute('data-tab')); });
+      b.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          e.preventDefault();
+          var next = buttons[(i + 1) % buttons.length];
+          next.focus(); activate(next.getAttribute('data-tab'));
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          var prev = buttons[(i - 1 + buttons.length) % buttons.length];
+          prev.focus(); activate(prev.getAttribute('data-tab'));
+        }
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
