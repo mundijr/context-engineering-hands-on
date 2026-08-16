@@ -1,4 +1,4 @@
-> **TL;DR** — 7 runnable demos across 3 directories, all runnable with [uv](https://docs.astral.sh/uv/) and an Anthropic API key.
+> **TL;DR** — 7 runnable demos under `demos/`, all runnable with [uv](https://docs.astral.sh/uv/) and an Anthropic API key.
 > `export ANTHROPIC_API_KEY=… && uv run demos/<path>/<script>.py`
 
 # Context Engineering Hands-On
