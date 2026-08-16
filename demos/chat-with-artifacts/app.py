@@ -36,6 +36,7 @@ from schemas import ArtifactRegistry, get_artifact_descriptions, get_artifact_to
 
 MODEL = "claude-sonnet-4-6"
 STATIC_DIR = Path(__file__).parent / "static"
+PORT = 8001
 
 # ─── TEACHING MOMENT ──────────────────────────────────────────────
 # The system prompt is built from 3 layers, each with a different
@@ -269,6 +270,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     print("Starting Chat with Artifacts...")
-    print("  Open: http://127.0.0.1:8001")
+    print(f"  Open: http://127.0.0.1:{PORT}")
     print("  Press Ctrl+C to stop\n")
-    uvicorn.run(app, host="127.0.0.1", port=8001)
+    uvicorn.run(app, host="127.0.0.1", port=PORT)

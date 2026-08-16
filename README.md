@@ -1,4 +1,4 @@
-> **TL;DR** — 6 runnable demos across 3 directories, all runnable with [uv](https://docs.astral.sh/uv/) and an Anthropic API key.
+> **TL;DR** — 7 runnable demos across 3 directories, all runnable with [uv](https://docs.astral.sh/uv/) and an Anthropic API key.
 > `export ANTHROPIC_API_KEY=… && uv run demos/<path>/<script>.py`
 
 # Context Engineering Hands-On
@@ -18,6 +18,7 @@ Live demos and hands-on code — all runnable with [uv](https://docs.astral.sh/u
 | Minimal file-tool chat agent | `demos/live-demo-chat-agent-ctx-eng-overview/chat.py` | Smallest possible agent loop with `web_search`, `read_file`, `create_file` tools |
 | Quiz app | `demos/live-demo-chat-agent-ctx-eng-overview/quiz_app.py` | FastAPI + `messages.parse` structured-output quiz generator |
 | Structured output primer | `demos/live-demo-chat-agent-ctx-eng-overview/structured_output_example.py` | Smallest possible `messages.parse` example |
+| Structured outputs primer (bonus) | `demos/chat-with-artifacts/structured_outputs_demo.py` | Same prompt forced through 3 different tool schemas, no FastAPI scaffolding |
 | Agentic-RAG CLI | `demos/full_agent_app.py` | Same retrieval idea as `agentic-retrieval/`, built on `claude-agent-sdk` instead of raw API calls |
 
 ---
@@ -72,14 +73,7 @@ cd demos/agentic-retrieval
 uv run app.py
 ```
 
-**Quick start:**
-
-1. `What documents do you have?` — triggers `list_documents`
-2. `What is context engineering?` — triggers `search_documents`
-3. `Tell me more about the Manus architecture` — triggers `get_document` for full content
-4. `/context` — inspect the raw messages array
-5. `/stats` — see cumulative token counts
-6. `/clear` — reset and compare fresh vs. accumulated cost
+**Try:** `What documents do you have?`, then `/context` to inspect the raw messages array. The full query sequence and slash-command reference live in `demos/agentic-retrieval/README.md`.
 
 ---
 
@@ -98,6 +92,11 @@ uv run app.py
 
 Then open **http://127.0.0.1:8001** in your browser.
 
+**What to try:**
+- Ask about any topic to see the artifact system in action
+- Watch the token counter grow in the stats bar as artifacts are created
+- Ask to be quizzed to see context from earlier turns referenced in new outputs
+
 **What's demonstrated:**
 - 3-layer system prompt (persona + artifact schemas + dynamic session state)
 - Structured output via a single `create_artifact` tool
@@ -112,7 +111,7 @@ Then open **http://127.0.0.1:8001** in your browser.
 
 **Directory:** `demos/live-demo-chat-agent-ctx-eng-overview/`
 
-Three independent single-file scripts, not a package:
+Three independent single-file scripts, not a package. `cd demos/live-demo-chat-agent-ctx-eng-overview` first, then:
 
 - **`chat.py`** — minimal agent loop with `web_search`, `read_file`, and `create_file` tools. Executable directly (`./chat.py`) or via `uv run chat.py`.
 - **`quiz_app.py`** — a tiny chat-driven quiz generator. Run `uv run quiz_app.py`, then open **http://127.0.0.1:8501**. Builds on `structured_output_example.py` by rendering questions in the browser and auto-grading answers.

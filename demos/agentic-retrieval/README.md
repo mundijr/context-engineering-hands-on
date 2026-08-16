@@ -1,6 +1,6 @@
 # Agentic Document Retrieval Demo
 
-A hands-on demo showing how context flows through an agent loop with retrieval tools. Built for Session 2 of the Context Engineering course.
+A hands-on demo showing how context flows through an agent loop with retrieval tools, built for the Context Engineering Hands-On course.
 
 ## Architecture
 

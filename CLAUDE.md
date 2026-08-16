@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-O'Reilly live training course — **Context Engineering Hands-On** — teaching developers how to design, manage, and optimize the context that flows into LLMs and agentic systems. The repo holds slide decks and hands-on Python demos, all runnable via `uv run <script>.py` with an `ANTHROPIC_API_KEY` env var. `README.md` covers the same demos in more run-it-yourself detail (prerequisites, sample queries, troubleshooting); this file focuses on architecture.
+O'Reilly live training course — **Context Engineering Hands-On** — teaching developers how to design, manage, and optimize the context that flows into LLMs and agentic systems. The repo holds slide decks and hands-on Python demos, all runnable via `uv run <script>.py` with an `ANTHROPIC_API_KEY` env var. `README.md` covers the same demos in more run-it-yourself detail (prerequisites, sample queries, per-demo troubleshooting); this file focuses on architecture. `README.md` doesn't cover the `make all`/`make clean` Jupyter-kernel workflow described below — that's dev-environment setup, not demo instructions.
 
 ## Commands
 
