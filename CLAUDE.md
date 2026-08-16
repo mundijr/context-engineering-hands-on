@@ -71,7 +71,7 @@ Every demo teaches a different context-engineering lever by making it visible in
 
 Independent single-file scripts, not a package:
 
-- `chat.py` — minimal agent loop with `web_search`, `read_file`, `create_file` tools.
+- `chat.py` — minimal agent loop with `web_search`, `read_file`, `create_file`, `search_files` tools.
 - `quiz_app.py` — FastAPI + `client.messages.parse(..., output_format=Quiz)` structured-output quiz generator with inline HTML frontend.
 - `structured_output_example.py` — smallest possible `messages.parse` structured-output example.
 
