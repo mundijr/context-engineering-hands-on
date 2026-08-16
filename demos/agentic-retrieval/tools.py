@@ -15,10 +15,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from anthropic.types import ToolParam
 from retrieval import KnowledgeBase
 
 
-def get_tool_definitions() -> list[dict]:
+def get_tool_definitions() -> list[ToolParam]:
     """
     Return tool schemas in Anthropic API format.
 

@@ -12,6 +12,7 @@ from dataclasses import dataclass
 
 import anthropic
 import display
+from anthropic.types import MessageParam, ToolParam
 from retrieval import KnowledgeBase
 from tools import execute_tool, get_tool_definitions
 
@@ -95,9 +96,9 @@ class Agent:
     def __init__(self, kb: KnowledgeBase):
         self.client = anthropic.Anthropic()
         self.kb = kb
-        self.messages: list[dict] = []  # THE context window
+        self.messages: list[MessageParam] = []  # THE context window
         self.stats = ContextStats()
-        self.tool_definitions = get_tool_definitions()
+        self.tool_definitions: list[ToolParam] = get_tool_definitions()
 
     def run_turn(self, user_input: str) -> str:
         """
@@ -174,7 +175,7 @@ class Agent:
                 text_blocks = [
                     block.text
                     for block in response.content
-                    if hasattr(block, "text")
+                    if isinstance(block, anthropic.types.TextBlock)
                 ]
                 final_text = "\n".join(text_blocks)
                 self.messages.append(
@@ -224,7 +225,7 @@ class Agent:
         self.stats.record_usage(response.usage)
         return response
 
-    def get_context_snapshot(self) -> list[dict]:
+    def get_context_snapshot(self) -> list[MessageParam]:
         """Return the raw messages array for inspection."""
         return self.messages
 
